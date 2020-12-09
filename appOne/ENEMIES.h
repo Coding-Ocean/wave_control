@@ -2,6 +2,12 @@
 #include"ENEMY.h"
 class ENEMIES
 {
+    //
+    struct NUM_DATA {
+        int numAppearData = 0;
+        int numWaveData = 0;
+    };
+    struct NUM_DATA NumData;
     //Appear data
     struct APPEAR_DATA {
         int type;
@@ -10,39 +16,24 @@ class ENEMIES
         float dx;
         float dy;
     };
-    struct APPEAR_DATA AppearData[11] = {
-        0,100,-200,0,8,//0
-        0,250,-200,0,8,//1
-        0,400,-200,0,8,//2
-
-        1,-200,100,8,0,//3
-        1,600,250,-8,0,//4
-        1,-200,400,8,0,//5
-
-        2,190,-200,0,8,//6
-        2,310,-200,0,8,//7
-
-        0,100,-200,0,16,//8
-        1,-200,250,8,0,//9
-        2,400,-200,0,8,//10
-    };
-
+    struct APPEAR_DATA* AppearData=0;
     //Wave data
-    struct WAVE {
+    struct WAVE_DATA {
         int appearFrame;
         int numAppearEnemies;//最大同時出現数３体
         int appearDataIdxs[3];//２体以下の場合、余ったところに-1を設定(何でもよいのだが)
     };
-    struct WAVE Waves[6] = {
-        120,1,1,-1,-1,
-        240,2,0,2,-1,
-        360,3,0,1,2,
-        480,3,3,4,5,
-        600,2,6,7,-1,
-        720,3,8,9,10,
-    };
+    struct WAVE_DATA* WaveData=0;
     int WaveIdx = 0;
     int FrameCnt = 0;
+    //data functions
+    void CreateAppearData();
+    void CreateWaveData();
+    void CreateNumData();
+    void CreateData();
+    void LoadData();
+    void FreeData();
+
 
     //Enemies
     int NumTypes = 3;//タイプ数

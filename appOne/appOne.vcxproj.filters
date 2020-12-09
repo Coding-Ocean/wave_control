@@ -38,4 +38,8 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="data\wave_data.txt" />
+    <Text Include="data\appear_data.txt" />
+  </ItemGroup>
 </Project>

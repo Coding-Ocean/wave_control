@@ -160,6 +160,10 @@
     <ClInclude Include="ENEMIES.h" />
     <ClInclude Include="ENEMY.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="data\appear_data.txt" />
+    <Text Include="data\wave_data.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
