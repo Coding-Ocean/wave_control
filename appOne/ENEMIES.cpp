@@ -1,11 +1,10 @@
-#include<iostream>
+#include<stdio.h>
 #include "ENEMIES.h"
 ENEMIES::~ENEMIES() {
     FreeData();
     if (Enemies) { delete[] Enemies; Enemies = 0; }
 }
 void ENEMIES::create() {
-    CreateData();
     LoadData();
     //敵の総数＝タイプ数×タイプごとの数
     NumEnemies = NumTypes * NumByType;
@@ -30,14 +29,11 @@ void ENEMIES::Appear(int idx){
 }
 void ENEMIES::wave() {
     ++FrameCnt;
-    struct WAVE_DATA& wave = WaveData[WaveIdx];
-    if (FrameCnt >= wave.appearFrame) {
-        for (int i = 0; i < wave.numAppearEnemies; i++) {
-            Appear(wave.appearDataIdxs[i]);
-        }
-        //次のWaveの準備
+    while (WaveIdx < NumData.numWaveData &&
+        FrameCnt == WaveData[WaveIdx].appearFrame) {
+        Appear(WaveData[WaveIdx].appearDataIdx);
         ++WaveIdx;
-        if (WaveIdx == 6) {
+        if (WaveIdx == NumData.numWaveData) {
             //最初に戻る
             WaveIdx = 0;
             FrameCnt = 0;
@@ -55,79 +51,6 @@ void ENEMIES::draw() {
     }
 }
 
-void ENEMIES::CreateAppearData() {
-    //AppearData行数を数える
-    FILE* fp;
-    fopen_s(&fp, "data/appear_data.txt", "r");
-    char str[128];
-    int numData = 0;
-    while (fgets(str, 128, fp) != 0) {
-        numData++;
-    }
-
-    //appear_data.txt読み込み
-    AppearData = new APPEAR_DATA[numData];
-    rewind(fp);
-    for (int i = 0; i < numData; ++i) {
-        fscanf_s(fp, "%d,%f,%f,%f,%f,",
-            &AppearData[i].type,
-            &AppearData[i].px, &AppearData[i].py,
-            &AppearData[i].dx, &AppearData[i].dy
-        );
-    }
-    fclose(fp);
-
-    //appear_data.bin書き込み
-    fopen_s(&fp, "data/appear_data.bin", "w");
-    fwrite(AppearData, sizeof(APPEAR_DATA), numData, fp);
-    fclose(fp);
-    delete[] AppearData;
-
-    NumData.numAppearData = numData;
-}
-void ENEMIES::CreateWaveData() {
-    //WaveData行数を数える
-    FILE* fp;
-    fopen_s(&fp, "data/wave_data.txt", "r");
-    char str[128];
-    int numData = 0;
-    while (fgets(str, 128, fp) != 0) {
-        numData++;
-    }
-
-    //wave_data.txt読み込み
-    WaveData = new WAVE_DATA[numData];
-    rewind(fp);
-    for (int i = 0; i < numData; ++i) {
-        fscanf_s(fp, "%d,%d,%d,%d,%d,",
-            &WaveData[i].appearFrame,
-            &WaveData[i].numAppearEnemies,
-            &WaveData[i].appearDataIdxs[0],
-            &WaveData[i].appearDataIdxs[1],
-            &WaveData[i].appearDataIdxs[2]
-        );
-    }
-    fclose(fp);
-
-    //wave_data.bin書き込み
-    fopen_s(&fp, "data/wave_data.bin", "w");
-    fwrite(WaveData, sizeof(WAVE_DATA), numData, fp);
-    fclose(fp);
-    delete[] WaveData;
-
-    NumData.numWaveData = numData;
-}
-void ENEMIES::CreateNumData() {
-    FILE* fp;
-    fopen_s(&fp, "data/num_data.bin", "w");
-    fwrite(&NumData, sizeof(NUM_DATA), 1, fp);
-    fclose(fp);
-}
-void ENEMIES::CreateData() {
-    CreateAppearData();
-    CreateWaveData();
-    CreateNumData();
-}
 void ENEMIES::LoadData() {
     FILE* fp;
     fopen_s(&fp, "data/num_data.bin", "r");
